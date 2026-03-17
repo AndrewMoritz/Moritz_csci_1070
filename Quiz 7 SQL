@@ -22,3 +22,6 @@ From
 		ON city.country_id=country.country_id
 
 ORDER BY full_name;
+
+4. What sort of companies/industries are you interested in working for/in?
+I am still not fully sure what I want to do and am still exploring lots of things, but as of now I think I want to do some sort of data science potenially in the medical or health care world
