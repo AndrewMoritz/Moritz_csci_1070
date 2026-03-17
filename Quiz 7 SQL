@@ -1,0 +1,24 @@
+1. Select the payments that are greater than or equal to 9.99
+SELECT customer_id, amount
+From payment
+WHERE amount >= 9.99
+
+2. Select the most expensive rental payment (what is the max price paid), and use it to find out which films were rented for this price.
+SELECT title, rental_rate 
+From film
+ORDER BY rental_rate DESC
+The highest rental payment is 4.99 and there were a lot of films at this price
+
+3. Show a roster for the staff that includes their full name, email, address, city, and country
+SELECT staff.first_name ||''||staff.last_name AS full_name,staff.email,address.address,city.city,country.country
+
+From 
+	staff
+	INNER JOIN address
+		ON staff.address_id=address.address_id
+	INNER JOIN city
+		ON address.city_id=city.city_id
+	INNER JOIN country
+		ON city.country_id=country.country_id
+
+ORDER BY full_name;
