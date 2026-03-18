@@ -1,0 +1,12 @@
+1. Show all customers whose last names start with T. Order them by first name from A-Z.
+SELECT *
+From customer
+WHERE  last_name LIKE 'T%'
+ORDER BY first_name
+
+2. Show all rentals returned from 5/28/2005 to 6/1/2005
+SELECT *
+From rental
+WHERE rental_date BETWEEN '2005-05-28'AND '2005-06-01'
+
+3. What query would you use to determine which movies are rented the most? Show the top 10 movies rented the most.
