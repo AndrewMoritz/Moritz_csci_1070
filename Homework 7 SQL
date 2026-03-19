@@ -10,3 +10,80 @@ From rental
 WHERE rental_date BETWEEN '2005-05-28'AND '2005-06-01'
 
 3. What query would you use to determine which movies are rented the most? Show the top 10 movies rented the most.
+SELECT f.film_id, f.title, COUNT(r.rental_id) AS times_rented
+from film f
+JOIN inventory i 
+ON f.film_id = i.film_id
+JOIN rental r
+ON i.inventory_id=r.inventory_id
+GROUP BY f.film_id, f.title
+ORDER BY times_rented DESC;
+
+Top 10: 1. Bucket Brotherhood 2. Rocketeer Mother 3. Grit Clockwork 4. Forward Temple 5. Ridgemont Submarine 6. Juggler Hardly 7. Scalawag Duck 8. Zorro Ark 9. Network Peak 10. Goodfellas Salute
+
+4. Show how much each customer spent on movies (for all time). Order them from least to most.
+SELECT c.customer_id, c.first_name, c.last_name, SUM(p.amount) AS total_spent
+FROM customer c
+JOIN payment p
+ON c.customer_id=p.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name
+ORDER BY total_spent ASC;
+
+5. Which actor was in the most movies in 2006 (based on this dataset)? Be sure to alias the actor name and count as a more descriptive name. Order the results from most to least.
+SELECT a.actor_id, a.first_name ||''|| a.last_name AS actor_name, COUNT(*) AS movies_in_2006
+FROM actor a
+JOIN film_actor fa
+ON a.actor_id=fa.actor_id
+JOIN film f
+ON fa.film_id=f.film_id
+WHERE f.release_year=2006
+GROUP BY a.actor_id, actor_name
+ORDER BY movies_in_2006 DESC;
+
+6. Write an explain plan for 4 and 5. Show the queries and explain what is happening in each one and what the output means to the best of your ability. Use the following link to understand how this works http://postgresguide.com/performance/explain.htmlLinks to an external site.
+To do this we would want to put explain before both queries. In 4 and 5 it tells how it sorts and then goes step by step in the joins and then group bys. It also goes over the cost to run each step and how much time it takes to run each step
+
+7. What is the average rental rate per genre?
+SELECT c.name AS genre, AVG(f.rental_rate) AS avg_rental_rate
+FROM category c
+JOIN film_category fc
+ON c.category_id = fc.category_id
+JOIN film f
+ON fc.film_id = f.film_id
+GROUP BY c.name
+ORDER BY avg_rental_rate;
+
+"Action"	2.6462500000000000
+"Documentary"	2.6664705882352941
+"Classics"	2.7443859649122807
+"Family"	2.7581159420289855
+"Animation"	2.8081818181818182
+"Children"	2.8900000000000000
+"Music"	2.9507843137254902
+"Drama"	3.0222580645161290
+"Horror"	3.0257142857142857
+"Foreign"	3.0995890410958904
+"New"	3.1169841269841270
+"Sports"	3.1251351351351351
+"Comedy"	3.1624137931034483
+"Sci-Fi"	3.2195081967213115
+"Travel"	3.2356140350877193
+"Games"	3.2522950819672131
+
+8. What categories are the most rented and what are their total sales? Show the top 5 most rented categories.
+SELECT c.name AS category, COUNT(r.rental_id) AS total_rentals, SUM(p.amount) AS total_sales
+FROM category c
+JOIN film_category fc
+ON c.category_id = fc.category_id
+JOIN film f
+ON fc.film_id = f.film_id
+JOIN inventory i
+ON f.film_id = i.film_id
+JOIN rental r
+ON i.inventory_id = r.inventory_id
+JOIN payment p
+ON r.rental_id = p.rental_id
+GROUP BY c.name
+ORDER BY total_rentals DESC
+LIMIT 5;
+TOP 5: 1. Sports 2. Animation 3. Action 4. Sci-Fi 5. Family
