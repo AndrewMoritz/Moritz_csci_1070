@@ -1,0 +1,7 @@
+1. I am planning on working on my own for the final project, and am not sure yet how much time it will take, but I plan to start early and do at least an hour or two a week. For my project I want to use a dataset of St. Louis Cardinals stats to predict if a player is or is not a hall of famer
+
+2. I am going to use the cardinals_data data set that is listed in my repository
+
+3. Null: It is not possible to predict if a player will make the HOF from the cardinals_data data set
+Alternative: It is possible to predict if a player will make the HOF from the cardinals_data data set
+4. I plan to do KNN and Logistic regression on my data
