@@ -1,0 +1,81 @@
+1. 
+ALTER TABLE rental
+ADD COLUMN status TEXT;
+UPDATE rental r
+SET status = CASE
+    WHEN r.return_date IS NULL THEN 'Not returned'
+    WHEN r.return_date > r.rental_date + (f.rental_duration * INTERVAL '1 day')
+        THEN 'Late'
+    WHEN r.return_date < r.rental_date + (f.rental_duration * INTERVAL '1 day')
+        THEN 'Early'
+    ELSE 'On time'
+END
+FROM inventory i
+JOIN film f ON i.film_id = f.film_id
+WHERE r.inventory_id = i.inventory_id;
+
+2. 
+Select ct.city, sum(p.amount) AS total_payment
+from payment p 
+LEFT Join customer c
+ON p.customer_id=c.customer_id
+LEFT Join address a
+ON c.address_id=a.address_id
+LEFT Join city ct
+ON a.city_id=ct.city_id
+WHERE ct.city IN ('Kansas City', 'Saint Louis')
+GROUP BY ct.city;
+Total payments: KC: 81.81, STL: 78.79
+
+3. 
+SELECT c.name, count(fc.film_id) AS total_films
+FROM category c
+JOIN film_category fc
+ON c.category_id=fc.category_id
+GROUP by c.name
+order by total_films DESC;
+Most: Sports(74)
+Least: Music(51)
+
+4. The reason for both a category and a film category table is so that there is one table to match the film ids
+with the category ids and then a separate table to match the category ids with the name of the categories
+
+5.
+SELECT f.film_id, f.title, f.length
+from film f 
+join inventory i
+on f.film_id=i.film_id
+join rental r
+on i.inventory_id=r.inventory_id
+WHERE r.return_date between '2005-05-15' and '2005-05-31'
+ORDER by r.return_date;
+
+6.
+SELECT title, rental_rate
+FROM film
+Where rental_rate < (
+	Select AVG(rental_rate)
+	FROM film
+)
+ORDER BY rental_rate DESC
+
+7. 
+SELECT status, COUNT(*) AS total_rentals
+from rental
+group by status
+Late: 8121
+Early: 7738
+On time: 2
+
+8. 
+SELECT title, length,
+	PERCENT_RANK() OVER( ORDER BY length)
+		AS percentile
+from film;
+9. For number 7 it gives a 3 line explain summary. The first line says hash aggegate and gives a cost and the the rows and width f the table created
+It then says group key status which is just saying that we grouped by status
+And then it says seq scan on rental and gives a cost and all the rows of rental.
+In number 6 the query plan is 7 lines which makes sense since there is more code.
+This time it starts by sorting and then takes the aggreage before doing two different seq scans,
+and then lastly filters by the rental rate less than the average. 
+It is interesting to see how for both it doesn't neccesarily go in sequential order of how it is typed but what actions need to be done first
